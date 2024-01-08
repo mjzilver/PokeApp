@@ -12,6 +12,11 @@ namespace PokeApp.Services
             // get trainer by id or throw exception
             var trainer = _context.Trainers.Find(request.TrainerId) ?? throw new Exception("Trainer not found");
 
+            if(trainer.Pokemons.Count >= 6)
+            {
+                throw new Exception("Trainer already has 6 Pokemon");
+            }
+
             var caughtPokemon = new Pokemon
             {
                 Name = request.Name,

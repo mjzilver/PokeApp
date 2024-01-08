@@ -49,8 +49,6 @@ const PokemonList: React.FC<PokemonListProps> = ({ onCatch, }) => {
         }
     };
 
-    const [selectedTrainer, setSelectedTrainer] = useState<number | null>(null);
-
     const handleRefresh = () => {
         setPokemonList([]); 
         fetchKantoPokemon(); 
@@ -67,7 +65,7 @@ const PokemonList: React.FC<PokemonListProps> = ({ onCatch, }) => {
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gridGap: '2px' }}>
                 {pokemonList.map(pokemon => (
-                    <PokemonCard key={pokemon.id} pokemon={pokemon} onCatch={() => onCatch(pokemon)} />
+                    <PokemonCard key={pokemon.id} pokemon={pokemon} clickText='Catch' onClick={() => onCatch(pokemon)} />
                 ))}
             </div>
         </div>

@@ -8,29 +8,15 @@ namespace PokeApp.Controllers
 {
     [Route("api/pokemon")]
     [ApiController]
-    public class PokemonController : ControllerBase
+    public class PokemonController(PokemonContext context, PokemonService pokemonService) : ControllerBase
     {
-        private readonly PokemonContext _context;
-        private readonly PokemonService _pokemonService;
+        private readonly PokemonContext _context = context;
+        private readonly PokemonService _pokemonService = pokemonService;
 
-        public PokemonController(PokemonContext context, PokemonService pokemonService)
-        {
-            _context = context;
-            _pokemonService = pokemonService ?? throw new ArgumentNullException(nameof(pokemonService));
-        }
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Pokemon>>> GetPokemons()
         {
             return await _context.Pokemons.ToListAsync();
-        }
-
-        [HttpPost("catch")]
-        public IActionResult CatchPokemon([FromBody] PokemonCatchRequest request)
-        {
-            // Call the Pokemon service to handle catching and saving the Pokemon
-            _pokemonService.CatchAndSavePokemon(request);
-
-            return Ok();
         }
 
         [HttpGet("{id}")]
@@ -54,10 +40,18 @@ namespace PokeApp.Controllers
                 return BadRequest();
             }
 
-            var trainerExists = await _context.Trainers.AnyAsync(t => t.Id == pokemon.TrainerId);
-            if (!trainerExists)
+            var trainer = await _context.Trainers
+                .Include(t => t.Pokemons)
+                .FirstOrDefaultAsync(t => t.Id == pokemon.TrainerId);
+                
+            if (trainer == null)
             {
                 return BadRequest("Invalid TrainerId");
+            }
+
+            if (trainer.Pokemons?.Count >= 6)
+            {
+                return BadRequest("Trainer already has 6 Pokemon");
             }
 
             _context.Pokemons.Add(pokemon);

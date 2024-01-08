@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import PokemonCard from '../Pokemon/PokemonCard';
-import TrainerSelector from '../Trainer/TrainerSelector';
 import Pokemon from '../Pokemon/Pokemon';
 import Trainer from './Trainer';
 
@@ -14,7 +13,7 @@ const TeamViewer: React.FC<TeamViewerProps> = ({ selectedTrainerId: selectedTrai
 
   const fetchTrainerTeam = async (trainerId: number) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/trainer/${trainerId}`, {
+      const response = await fetch(`http://localhost:5005/api/trainer/${trainerId}`, {
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
@@ -40,7 +39,17 @@ const TeamViewer: React.FC<TeamViewerProps> = ({ selectedTrainerId: selectedTrai
       {trainer !== null && trainer.pokemons !== null ? (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gridGap: '16px' }}>
           {trainer.pokemons.map((pokemon) => (
-            <PokemonCard key={pokemon.id} pokemon={pokemon} onCatch={() => {}} />
+            <PokemonCard key={pokemon.id} pokemon={pokemon} clickText='Release' onClick={async () => {
+              await fetch(`http://localhost:5005/api/pokemon/${pokemon.id}`, {
+                method: 'DELETE',
+                headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json',
+                },
+              });
+              // reload the team viewer
+              if (selectedTrainerId) fetchTrainerTeam(selectedTrainerId);
+            }} />
           ))}
         </div>
       ) : (

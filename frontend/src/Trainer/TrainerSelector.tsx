@@ -15,7 +15,7 @@ const TrainerSelector: React.FC<TrainerSelectorProps> = ({ onSelect }) => {
 
   const fetchTrainers = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/trainer', {
+      const response = await fetch('http://localhost:5005/api/trainer', {
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',

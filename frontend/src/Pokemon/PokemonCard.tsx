@@ -4,15 +4,16 @@ import Pokemon from './Pokemon';
 
 interface PokemonCardProps {
     pokemon: Pokemon;
-    onCatch: () => void;
+    onClick: () => void;
+    clickText: string;
 }
 
-const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onCatch }) => {
+const PokemonCard: React.FC<PokemonCardProps> = ({ pokemon, onClick, clickText }) => {
     return (
-        <div style={{ border: '1px solid #ccc', padding: '10px', margin: '10px', width: '150px', textAlign: 'center' }}>
-            <img src={pokemon.image} alt={pokemon.name} style={{ width: '100px', height: '100px' }} />
+        <div style={{ border: '1px solid #ccc', padding: '5px', margin: '5px', width: '100px', textAlign: 'center' }}>
+            <img src={pokemon.image} alt={pokemon.name} style={{ width: '50px', height: '50px' }} />
             <h3>{pokemon.name}</h3>
-            <button onClick={onCatch}>Catch</button>
+            <button onClick={onClick}>{clickText}</button>
         </div>
     );
 };

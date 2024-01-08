@@ -37,5 +37,44 @@ namespace PokeApp.Controllers
 
             return trainer;
         }
+
+        [HttpPost]
+        public async Task<ActionResult<Trainer>> AddTrainer(Trainer trainer)
+        {
+            _context.Trainers.Add(trainer);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetTrainer), new { id = trainer.Id }, trainer);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateTrainer(int id, Trainer trainer)
+        {
+            if (id != trainer.Id)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(trainer).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteTrainer(int id)
+        {
+            var trainer = await _context.Trainers.FindAsync(id);
+
+            if (trainer == null)
+            {
+                return NotFound();
+            }
+
+            _context.Trainers.Remove(trainer);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }
