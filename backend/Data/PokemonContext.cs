@@ -3,12 +3,8 @@ using PokeApp.Models;
 
 namespace PokeApp.Data
 {
-    public class PokemonContext : DbContext
+    public class PokemonContext(DbContextOptions<PokemonContext> options) : DbContext(options)
     {
-        public PokemonContext(DbContextOptions<PokemonContext> options) : base(options)
-        {
-        }
-
         public DbSet<Pokemon> Pokemons { get; set; }
         public DbSet<Trainer> Trainers { get; set; }
 

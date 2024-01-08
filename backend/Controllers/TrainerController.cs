@@ -20,13 +20,15 @@ namespace PokeApp.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Trainer>>> GetTrainers()
         {
-            return await _context.Trainers.ToListAsync();
+            return await _context.Trainers.Include(t => t.Pokemons).ToListAsync();
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Trainer>> GetTrainer(int id)
         {
-            var trainer = await _context.Trainers.FindAsync(id);
+            var trainer = await _context.Trainers
+                .Include(t => t.Pokemons)
+                .FirstOrDefaultAsync(t => t.Id == id);
 
             if (trainer == null)
             {

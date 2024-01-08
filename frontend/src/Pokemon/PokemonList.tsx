@@ -2,10 +2,9 @@ import React, { useState, useCallback, useEffect } from 'react';
 
 import PokemonCard from './PokemonCard';
 import Pokemon from './Pokemon';
-import TrainerSelector from './TrainerSelector';
 
 interface PokemonListProps {
-    onCatch: (pokemon: Pokemon, trainerId: number) => void;
+    onCatch: (pokemon: Pokemon) => void;
 }
 
 const PokemonList: React.FC<PokemonListProps> = ({ onCatch, }) => {
@@ -66,11 +65,9 @@ const PokemonList: React.FC<PokemonListProps> = ({ onCatch, }) => {
             <h2>Pokémon List</h2>
             <button onClick={handleRefresh}>Refresh</button>
 
-            <TrainerSelector onSelect={(trainerId) => setSelectedTrainer(trainerId)} />
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gridGap: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gridGap: '2px' }}>
                 {pokemonList.map(pokemon => (
-                    <PokemonCard key={pokemon.id} pokemon={pokemon} onCatch={() => onCatch(pokemon, selectedTrainer || 0)} />
+                    <PokemonCard key={pokemon.id} pokemon={pokemon} onCatch={() => onCatch(pokemon)} />
                 ))}
             </div>
         </div>
