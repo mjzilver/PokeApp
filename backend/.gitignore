@@ -4,3 +4,6 @@ obj/
 
 # Macos
 .DS_Store
+
+pokemon.db-shm
+pokemon.db-wal

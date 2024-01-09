@@ -1,70 +1,35 @@
 import React, { useState, useCallback, useEffect } from 'react';
-
 import PokemonCard from './PokemonCard';
-import Pokemon from './Pokemon';
+import { Pokemon } from './Pokemon';
+import { fetchKantoPokemon } from './PokemonService';
 
 interface PokemonListProps {
     onCatch: (pokemon: Pokemon) => void;
 }
 
-const PokemonList: React.FC<PokemonListProps> = ({ onCatch, }) => {
+const PokemonList: React.FC<PokemonListProps> = ({ onCatch }) => {
     const [pokemonList, setPokemonList] = useState<Pokemon[]>([]);
 
-    const fetchKantoPokemon = useCallback(async () => {
+    const handleRefresh = async () => {
         try {
-            const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=151');
-            const allPokemon = await response.json();
-
-            // randomize the list of pokemon
-            const shuffledPokemon = allPokemon.results.sort(() => Math.random() - 0.5);
-
-            // select the first 12 pokemon from the randomized list
-            const selectedPokemon = shuffledPokemon.slice(0, 12);
-
-            // load in the data for each pokemon
-            const fetchedPokemonList: Pokemon[] = [];
-            for (const pokemon of selectedPokemon) {
-                const data = await fetchPokemonData(pokemon);
-                const newPokemon: Pokemon = {
-                    id: data.id,
-                    name: data.name,
-                    image: data.sprites.front_default,
-                };
-                fetchedPokemonList.push(newPokemon);
-            }
-
-            // set the list of pokemon in state
+            setPokemonList([]);
+            const fetchedPokemonList = await fetchKantoPokemon();
             setPokemonList(fetchedPokemonList);
         } catch (error) {
-            console.error('Error fetching Pokemon:', error);
+            console.error('Error refreshing Pokemon list:', error);
         }
-    }, []);
-
-    const fetchPokemonData = async (pokemon: any) => {
-        try {
-            const response = await fetch(pokemon.url);
-            return await response.json();
-        } catch (error) {
-            console.error('Error fetching Pokemon data:', error);
-        }
-    };
-
-    const handleRefresh = () => {
-        setPokemonList([]); 
-        fetchKantoPokemon(); 
     };
 
     useEffect(() => {
-        fetchKantoPokemon();
-    }, [fetchKantoPokemon]);
+        handleRefresh();
+    }, []);
 
     return (
         <div>
             <h2>Pokémon List</h2>
             <button onClick={handleRefresh}>Refresh</button>
-
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gridGap: '2px' }}>
-                {pokemonList.map(pokemon => (
+                {pokemonList.map((pokemon) => (
                     <PokemonCard key={pokemon.id} pokemon={pokemon} clickText='Catch' onClick={() => onCatch(pokemon)} />
                 ))}
             </div>

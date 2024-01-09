@@ -2,20 +2,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PokeApp.Data;
 using PokeApp.Models;
-using PokeApp.Services;
 
 namespace PokeApp.Controllers
 {
     [Route("api/trainer")]
     [ApiController]
-    public class TrainerController : ControllerBase
+    public class TrainerController(PokemonContext context) : ControllerBase
     {
-        private readonly PokemonContext _context;
-
-        public TrainerController(PokemonContext context)
-        {
-            _context = context;
-        }
+        private readonly PokemonContext _context = context;
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Trainer>>> GetTrainers()

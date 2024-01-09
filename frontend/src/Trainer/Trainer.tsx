@@ -1,4 +1,4 @@
-import Pokemon from '../Pokemon/Pokemon';
+import {Pokemon} from '../Pokemon/Pokemon';
 
 interface Trainer {
     id: number;

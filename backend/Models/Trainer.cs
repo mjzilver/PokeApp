@@ -6,6 +6,6 @@ namespace PokeApp.Models
     {
         public int Id { get; set; }
         public required string Name { get; set; }
-        public virtual required ICollection<Pokemon> Pokemons { get; set; }
+        public virtual ICollection<Pokemon>? Pokemons { get; set; }
     }
 }

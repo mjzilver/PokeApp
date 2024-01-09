@@ -1,37 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import PokemonCard from '../Pokemon/PokemonCard';
-import Pokemon from '../Pokemon/Pokemon';
 import Trainer from './Trainer';
+import { fetchTrainerTeam } from './TrainerService';
+import { releasePokemon } from '../Pokemon/PokemonService';
 
 interface TeamViewerProps {
-  selectedTrainerId: number | null;
+  selectedTrainer: Trainer | null;
 }
 
-const TeamViewer: React.FC<TeamViewerProps> = ({ selectedTrainerId: selectedTrainerId }) => {
+const TeamViewer: React.FC<TeamViewerProps> = ({ selectedTrainer: selectedTrainer }) => {
   const [trainer, setTrainer] = useState<Trainer | null>(null);
 
-
-  const fetchTrainerTeam = async (trainerId: number) => {
-    try {
-      const response = await fetch(`http://localhost:5005/api/trainer/${trainerId}`, {
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-      });
-      const data = await response.json();
-      console.log(data)
-      setTrainer(data);
-    } catch (error) {
-      console.error('Error fetching trainer team:', error);
-    }
-  };
-
   useEffect(() => {
-    if (selectedTrainerId !== null) {
-      fetchTrainerTeam(selectedTrainerId);
+    if (selectedTrainer !== null) {
+      fetchTrainerTeam(selectedTrainer.id).then((trainer) => setTrainer(trainer));
     }
-  }, [selectedTrainerId]);
+  }, [selectedTrainer]);
 
   return (
     <div>
@@ -39,16 +23,19 @@ const TeamViewer: React.FC<TeamViewerProps> = ({ selectedTrainerId: selectedTrai
       {trainer !== null && trainer.pokemons !== null ? (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gridGap: '16px' }}>
           {trainer.pokemons.map((pokemon) => (
-            <PokemonCard key={pokemon.id} pokemon={pokemon} clickText='Release' onClick={async () => {
-              await fetch(`http://localhost:5005/api/pokemon/${pokemon.id}`, {
-                method: 'DELETE',
-                headers: {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json',
-                },
-              });
-              // reload the team viewer
-              if (selectedTrainerId) fetchTrainerTeam(selectedTrainerId);
+            <PokemonCard key={pokemon.id} pokemon={pokemon} clickText='Release' onClick={async () => { 
+              releasePokemon(pokemon.id) 
+              
+              // update the state
+              if (trainer) {
+                const updatedPokemons = trainer.pokemons.filter((p) => p.id !== pokemon.id);
+                setTrainer((prevTrainer) => {
+                  if (prevTrainer) {
+                    return { ...prevTrainer, pokemons: updatedPokemons };
+                  }
+                  return prevTrainer;
+                });
+              }
             }} />
           ))}
         </div>

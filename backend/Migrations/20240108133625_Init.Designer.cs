@@ -70,7 +70,7 @@ namespace PokeApp.Migrations
                     b.HasOne("PokeApp.Models.Trainer", "Trainer")
                         .WithMany("Pokemons")
                         .HasForeignKey("TrainerId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Trainer");

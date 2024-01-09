@@ -32,7 +32,8 @@ namespace PokeApp.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     PokedexId = table.Column<int>(type: "INTEGER", nullable: false),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
-                    Type = table.Column<string>(type: "TEXT", nullable: false),
+                    Image = table.Column<string>(type: "TEXT", nullable: true),
+                    Types = table.Column<string>(type: "TEXT", nullable: true),
                     CapturedDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     TrainerId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
@@ -44,7 +45,7 @@ namespace PokeApp.Migrations
                         column: x => x.TrainerId,
                         principalTable: "Trainers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(

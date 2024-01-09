@@ -11,16 +11,27 @@ namespace PokeApp.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Pokemon>().ToTable("Pokemons");
-            modelBuilder.Entity<Pokemon>().HasKey(p => p.Id); 
+            modelBuilder.Entity<Pokemon>().HasKey(p => p.Id);
+
+            modelBuilder.Entity<Pokemon>()
+                .Property(p => p.Types)
+                .HasConversion(
+                    v => v != null ? string.Join(',', v) : null,
+                    v => v != null ? v.Split(',', StringSplitOptions.RemoveEmptyEntries) : null
+                ).HasColumnType("TEXT");
 
             modelBuilder.Entity<Trainer>().ToTable("Trainers");
-            modelBuilder.Entity<Trainer>().HasKey(t => t.Id); 
+            modelBuilder.Entity<Trainer>().HasKey(t => t.Id);
+
+            modelBuilder.Entity<Trainer>()
+                .HasMany(t => t.Pokemons)
+                .WithOne(p => p.Trainer)
+                .OnDelete(DeleteBehavior.Cascade); 
 
             modelBuilder.Entity<Pokemon>()
                 .HasOne(p => p.Trainer)
                 .WithMany(t => t.Pokemons)
-                .HasForeignKey(p => p.TrainerId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .HasForeignKey(p => p.TrainerId);
         }
     }
 }

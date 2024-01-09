@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using PokeApp.Data;
-using PokeApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,8 +10,6 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new() { Title = "Pokémon API", Version = "v1" });
 });
-
-builder.Services.AddScoped<PokemonService>();
 
 builder.Services.AddDbContext<PokemonContext>(options =>
 {

@@ -8,8 +8,8 @@ namespace PokeApp.Models
         public int Id { get; set; }
         public int PokedexId { get; set; }
         public required string Name { get; set; }
-        public required string Type { get; set; }
-        public string? image { get; set; }
+        public string[]? Types { get; set; }
+        public string? Image { get; set; }
         public DateTime CapturedDate { get; set; }
         public int TrainerId { get; set; }
         [JsonIgnore]

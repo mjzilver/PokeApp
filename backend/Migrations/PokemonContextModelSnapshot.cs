@@ -26,7 +26,7 @@ namespace PokeApp.Migrations
                     b.Property<DateTime>("CapturedDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("image")
+                    b.Property<string>("Image")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
@@ -39,8 +39,7 @@ namespace PokeApp.Migrations
                     b.Property<int>("TrainerId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
+                    b.Property<string>("Types")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -70,7 +69,7 @@ namespace PokeApp.Migrations
                     b.HasOne("PokeApp.Models.Trainer", "Trainer")
                         .WithMany("Pokemons")
                         .HasForeignKey("TrainerId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Trainer");

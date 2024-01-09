@@ -1,41 +1,24 @@
 import React, { useState, useEffect } from 'react';
 
-interface Trainer {
-  id: number;
-  name: string;
-}
+import { fetchTrainers } from './TrainerService';
+import Trainer from './Trainer';
 
 interface TrainerSelectorProps {
-  onSelect: (trainerId: number) => void;
+  onSelect: (trainer: Trainer | undefined) => void;
 }
 
 const TrainerSelector: React.FC<TrainerSelectorProps> = ({ onSelect }) => {
   const [trainers, setTrainers] = useState<Trainer[]>([]);
   const [selectedTrainer, setSelectedTrainer] = useState<number | null>(null);
 
-  const fetchTrainers = async () => {
-    try {
-      const response = await fetch('http://localhost:5005/api/trainer', {
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        }
-      });
-      const data = await response.json();
-      setTrainers(data);
-    } catch (error) {
-      console.error('Error fetching trainers:', error);
-    }
-  };
-
   const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedId = parseInt(event.target.value, 10);
     setSelectedTrainer(selectedId);
-    onSelect(selectedId);
+    onSelect(trainers.find((trainer) => trainer.id === selectedId));
   };
 
   useEffect(() => {
-    fetchTrainers();
+    fetchTrainers().then((trainers) => setTrainers(trainers));
   }, []);
 
   return (

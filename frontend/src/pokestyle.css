@@ -14,3 +14,7 @@
     padding: 10px;
     box-sizing: border-box;
 }
+
+.capture-info {
+    font-size: 0.8em;
+}
