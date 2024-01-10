@@ -2,14 +2,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PokeApp.Data;
 using PokeApp.Models;
+using PokeApp.Services;
 
 namespace PokeApp.Controllers
 {
     [Route("api/pokemon")]
     [ApiController]
-    public class PokemonController(PokemonContext context) : ControllerBase
+    public class PokemonController(PokemonContext context, PokemonBattleService pokemonBattleService) : ControllerBase
     {
         private readonly PokemonContext _context = context;
+        private readonly PokemonBattleService _pokemonBattleService = pokemonBattleService;
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Pokemon>>> GetPokemons()
@@ -41,7 +43,7 @@ namespace PokeApp.Controllers
             var trainer = await _context.Trainers
                 .Include(t => t.Pokemons)
                 .FirstOrDefaultAsync(t => t.Id == pokemon.TrainerId);
-                
+
             if (trainer == null)
             {
                 return BadRequest("Invalid TrainerId");
@@ -86,6 +88,38 @@ namespace PokeApp.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        [HttpGet("battle/{id1}/{id2}")]
+        public async Task<ActionResult<string>> BattlePokemon(int id1, int id2)
+        {
+            var pokemon1 = await _context.Pokemons.FindAsync(id1);
+            var pokemon2 = await _context.Pokemons.FindAsync(id2);
+
+            if (pokemon1 == null || pokemon2 == null)
+            {
+                return NotFound("One or both Pokemon not found.");
+            }
+
+            if (pokemon1.Types == null || pokemon2.Types == null || pokemon1.Types.Length == 0 || pokemon2.Types.Length == 0)
+            {
+                return BadRequest("Both Pokemon must have types.");
+            }
+
+            if (pokemon1 == pokemon2)
+            {
+                return BadRequest("Pokemon cannot battle themselves.");
+            }
+
+            var battleOutcome = await _pokemonBattleService.Battle(pokemon1, pokemon2);
+
+            return battleOutcome switch
+            {
+                BattleOutcome.Tie => (ActionResult<string>)Ok($"{pokemon1.Name} and {pokemon2.Name} tie!"),
+                BattleOutcome.Pokemon1Wins => (ActionResult<string>)Ok($"{pokemon1.Name} defeats {pokemon2.Name}!"),
+                BattleOutcome.Pokemon2Wins => (ActionResult<string>)Ok($"{pokemon2.Name} defeats {pokemon1.Name}!"),
+                _ => (ActionResult<string>)StatusCode(500, "Internal server error during battle."),
+            };
         }
     }
 }

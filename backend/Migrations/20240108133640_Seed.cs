@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations;
-using PokeApp.Data;
-using PokeApp.Models;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 

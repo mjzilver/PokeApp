@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PokeApp.Data;
+using PokeApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,10 @@ builder.Services.AddDbContext<PokemonContext>(options =>
 {
     options.UseSqlite(builder.Configuration.GetConnectionString("PokemonContext"));
 });
+
+// add service
+builder.Services.AddHttpClient<PokemonBattleService>();
+builder.Services.AddScoped<PokemonBattleService>();
 
 builder.Services.AddCors(options =>
 {

@@ -51,3 +51,21 @@ export const releasePokemon = async (pokemonId: number): Promise<void> => {
         throw error;
     }
 };
+
+export const catchPokemon = async (pokemon: Pokemon, trainerId: number): Promise<Response> => {
+    return await fetch(`http://localhost:5005/api/pokemon`, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            PokedexId: pokemon.id,
+            Name: pokemon.name,
+            Types: pokemon.types,
+            Image: pokemon.image,
+            TrainerId: trainerId,
+        }),
+    });
+
+}

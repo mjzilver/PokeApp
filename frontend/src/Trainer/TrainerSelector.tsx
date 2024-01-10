@@ -4,11 +4,11 @@ import { fetchTrainers } from './TrainerService';
 import Trainer from './Trainer';
 
 interface TrainerSelectorProps {
+  trainers: Trainer[];
   onSelect: (trainer: Trainer | undefined) => void;
 }
 
-const TrainerSelector: React.FC<TrainerSelectorProps> = ({ onSelect }) => {
-  const [trainers, setTrainers] = useState<Trainer[]>([]);
+const TrainerSelector: React.FC<TrainerSelectorProps> = ({ trainers, onSelect }) => {
   const [selectedTrainer, setSelectedTrainer] = useState<number | null>(null);
 
   const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -16,10 +16,6 @@ const TrainerSelector: React.FC<TrainerSelectorProps> = ({ onSelect }) => {
     setSelectedTrainer(selectedId);
     onSelect(trainers.find((trainer) => trainer.id === selectedId));
   };
-
-  useEffect(() => {
-    fetchTrainers().then((trainers) => setTrainers(trainers));
-  }, []);
 
   return (
     <div>
