@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import PokemonList from './Pokemon/PokemonList';
 import TeamViewer from './Trainer/TeamViewer';
 import TrainerSelector from './Trainer/TrainerSelector';
+import BattleModal from './Battle/BattleModal';
 import { fetchTrainers } from './Trainer/TrainerService';
 
 import './pokestyle.css';
@@ -40,7 +41,7 @@ const App: React.FC = () => {
         }
       } else {
         response.text().then((text) => {
-          setError(text); 
+          setError(text);
         });
       }
     }).catch((error) => {
@@ -51,15 +52,20 @@ const App: React.FC = () => {
   return (
     <div className="app-container">
       <div className="error-message">{error && <h2>{error}</h2>}</div>
+      <div>
+        <h1>Pokémon App</h1>
+        <BattleModal trainers={trainers} />
+        <br />
+      </div>
       <div className="app-content">
         <div className="half-width">
-          <TrainerSelector trainers={trainers} onSelect={(trainer) => {
-            if (trainer) setSelectedTrainer(trainer)
-          }} />
           <PokemonList onCatch={handleCatch} />
         </div>
 
         <div className="half-width">
+          <TrainerSelector trainers={trainers} onSelect={(trainer) => {
+            if (trainer) setSelectedTrainer(trainer)
+          }} />
           <TeamViewer selectedTrainer={selectedTrainer} />
         </div>
       </div>

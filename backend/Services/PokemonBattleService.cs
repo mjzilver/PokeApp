@@ -25,19 +25,35 @@ namespace PokeApp.Services
             var pokemon1AverageDamageMultiplier = 1.0;
             var pokemon2AverageDamageMultiplier = 1.0;
 
-            foreach(var type in pokemon1.Types!)
+            foreach (var type in pokemon1.Types!)
             {
-                foreach(var type2 in pokemon2.Types!) 
+                foreach (var type2 in pokemon2.Types!)
                 {
-                    pokemon1AverageDamageMultiplier *= CalculateDamageMultiplier(await GetTypeInfo(type), await GetTypeInfo(type2));
+                    var typeInfo = await GetTypeInfo(type);
+                    var type2Info = await GetTypeInfo(type2);
+
+                    if (typeInfo == null || type2Info == null)
+                    {
+                        throw new Exception("Error getting type info");
+                    }
+
+                    pokemon1AverageDamageMultiplier *= CalculateDamageMultiplier(typeInfo, type2Info);
                 }
             }
 
-            foreach(var type in pokemon2.Types!)
+            foreach (var type in pokemon2.Types!)
             {
-                foreach(var type2 in pokemon1.Types!) 
+                foreach (var type2 in pokemon1.Types!)
                 {
-                    pokemon2AverageDamageMultiplier *= CalculateDamageMultiplier(await GetTypeInfo(type), await GetTypeInfo(type2));
+                    var typeInfo = await GetTypeInfo(type);
+                    var type2Info = await GetTypeInfo(type2);
+
+                    if (typeInfo == null || type2Info == null)
+                    {
+                        throw new Exception("Error getting type info");
+                    }
+
+                    pokemon2AverageDamageMultiplier *= CalculateDamageMultiplier(typeInfo, type2Info);
                 }
             }
 
@@ -55,7 +71,7 @@ namespace PokeApp.Services
             }
         }
 
-        private async Task<PokemonTypeInfo> GetTypeInfo(string type)
+        private async Task<PokemonTypeInfo?> GetTypeInfo(string type)
         {
             var pokemonTypeInfo = new PokemonTypeInfo()
             {
@@ -82,15 +98,15 @@ namespace PokeApp.Services
             }
             catch (HttpRequestException)
             {
-                // ignore
+                return null;
             }
-            
+
             return pokemonTypeInfo;
         }
 
         private static double CalculateDamageMultiplier(PokemonTypeInfo attacker, PokemonTypeInfo defender)
         {
-            if(attacker.NoDamageTo.Contains(defender.Name))
+            if (attacker.NoDamageTo.Contains(defender.Name))
             {
                 return 0;
             }
@@ -117,7 +133,7 @@ namespace PokeApp.Services
         }
     }
 
-    public class PokemonTypeInfo
+    public record PokemonTypeInfo
     {
         public required string Name { get; set; }
         public required List<string> DoubleDamageTo { get; set; }
@@ -125,14 +141,13 @@ namespace PokeApp.Services
         public required List<string> NoDamageTo { get; set; }
     }
 
-
-    public class TypeInfoJSON
+    public record TypeInfoJSON
     {
         [JsonProperty("damage_relations")]
         public required DamageRelations DamageRelations { get; set; }
     }
 
-    public class DamageRelations
+    public record DamageRelations
     {
         [JsonProperty("double_damage_to")]
         public required List<TypeInfoLink> DoubleDamageTo { get; set; }
@@ -142,7 +157,7 @@ namespace PokeApp.Services
         public required List<TypeInfoLink> NoDamageTo { get; set; }
     }
 
-    public class TypeInfoLink
+    public record TypeInfoLink
     {
         [JsonProperty("name")]
         public required string Name { get; set; }
